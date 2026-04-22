@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Project_PakcetLogger_Integrative
 {
-    public partial class Form1 : Form
+    public partial class One_Time_Password : Form
     {
-        public Form1()
+        public One_Time_Password()
         {
             InitializeComponent();
         }
