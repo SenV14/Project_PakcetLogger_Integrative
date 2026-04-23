@@ -31,14 +31,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(One_Time_Password));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.lbl_Resend_code = new System.Windows.Forms.LinkLabel();
+            this.btn_Confirm_otp = new System.Windows.Forms.Button();
+            this.txt_One_time_Permit = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -48,6 +50,7 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Purple;
+            this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.pictureBox1);
@@ -61,9 +64,10 @@
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.Color.MediumVioletRed;
-            this.groupBox2.Controls.Add(this.linkLabel1);
             this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Controls.Add(this.lbl_Resend_code);
+            this.groupBox2.Controls.Add(this.btn_Confirm_otp);
+            this.groupBox2.Controls.Add(this.txt_One_time_Permit);
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.pictureBox2);
@@ -74,14 +78,35 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "groupBox2";
             // 
-            // textBox1
+            // lbl_Resend_code
             // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(30, 316);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(564, 66);
-            this.textBox1.TabIndex = 8;
+            this.lbl_Resend_code.AutoSize = true;
+            this.lbl_Resend_code.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_Resend_code.LinkColor = System.Drawing.Color.White;
+            this.lbl_Resend_code.Location = new System.Drawing.Point(403, 385);
+            this.lbl_Resend_code.Name = "lbl_Resend_code";
+            this.lbl_Resend_code.Size = new System.Drawing.Size(191, 19);
+            this.lbl_Resend_code.TabIndex = 11;
+            this.lbl_Resend_code.TabStop = true;
+            this.lbl_Resend_code.Text = "Resend Code for validation";
+            // 
+            // btn_Confirm_otp
+            // 
+            this.btn_Confirm_otp.Location = new System.Drawing.Point(30, 397);
+            this.btn_Confirm_otp.Name = "btn_Confirm_otp";
+            this.btn_Confirm_otp.Size = new System.Drawing.Size(117, 30);
+            this.btn_Confirm_otp.TabIndex = 10;
+            this.btn_Confirm_otp.Text = "Confirm";
+            this.btn_Confirm_otp.UseVisualStyleBackColor = true;
+            // 
+            // txt_One_time_Permit
+            // 
+            this.txt_One_time_Permit.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_One_time_Permit.Location = new System.Drawing.Point(30, 316);
+            this.txt_One_time_Permit.Multiline = true;
+            this.txt_One_time_Permit.Name = "txt_One_time_Permit";
+            this.txt_One_time_Permit.Size = new System.Drawing.Size(564, 66);
+            this.txt_One_time_Permit.TabIndex = 8;
             // 
             // label3
             // 
@@ -105,6 +130,18 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Packet Logging \r\nPasscode Authentication";
             // 
+            // pictureBox2
+            // 
+            this.pictureBox2.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
+            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
+            this.pictureBox2.Location = new System.Drawing.Point(15, 44);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(260, 157);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox2.TabIndex = 0;
+            this.pictureBox2.TabStop = false;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -115,39 +152,6 @@
             this.label1.Size = new System.Drawing.Size(634, 92);
             this.label1.TabIndex = 1;
             this.label1.Text = "Packet Logger";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(30, 397);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(117, 30);
-            this.button1.TabIndex = 10;
-            this.button1.Text = "Confirm";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Font = new System.Drawing.Font("Microsoft YaHei UI", 9.75F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabel1.LinkColor = System.Drawing.Color.White;
-            this.linkLabel1.Location = new System.Drawing.Point(403, 385);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(191, 19);
-            this.linkLabel1.TabIndex = 11;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Resend Code for validation";
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
-            this.pictureBox2.Location = new System.Drawing.Point(15, 44);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(248, 157);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox2.TabIndex = 0;
-            this.pictureBox2.TabStop = false;
             // 
             // pictureBox1
             // 
@@ -160,6 +164,26 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.Crimson;
+            this.button1.Location = new System.Drawing.Point(570, 19);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(64, 36);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "X";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(1355, 347);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
             // 
             // One_Time_Password
             // 
@@ -186,12 +210,14 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txt_One_time_Permit;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel lbl_Resend_code;
+        private System.Windows.Forms.Button btn_Confirm_otp;
+        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
     }
 }
