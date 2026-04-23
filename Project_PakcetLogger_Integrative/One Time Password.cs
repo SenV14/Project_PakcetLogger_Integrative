@@ -18,7 +18,10 @@ namespace Project_PakcetLogger_Integrative
     {
         public string ReceivedData { get; set; }
         public string password_2nd { get; set; }
-        int otpcode;
+        //create a variable for the otp code, so that it can be used in the otp_confirm method
+        Random rnd = new Random();
+        
+
         //limit for the otp code, if the user input the wrong otp code more than 3 times, the user will be exited in this site
         int Limit_Reset = 0;
         public One_Time_Password(string email, string password)
@@ -27,36 +30,13 @@ namespace Project_PakcetLogger_Integrative
             ReceivedData = email;
             password_2nd = password;
         }
-        public void otp_confirm(int otpcode)
+        public void otp_confirm(int otpcode_confirm)
         {
             try
             {
-
-                string user_input = otpcode.ToString().Trim();
-                int lenght_limit = 0;
-                int max_limit = 0;
-                for (int i = 0; i < lenght_limit; i++)
-                {
-                    int limit = lenght_limit;
-                    if (user_input != otpcode.ToString())
-                    {
-                        limit += 1 ;
-                        max_limit = limit;
-                    }
-
-                }
-                if (max_limit > 2)
-                {
-                    MessageBox.Show("You have exceeded the maximum number of attempts. Please try again later.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    this.Close();
-
-                }
-                else if (user_input == otpcode.ToString())
-                {
+                if(txt_One_time_Permit.Text == otpcode_confirm.ToString())
+                { 
                     MessageBox.Show("OTP code confirmed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    Sign_up signup = new Sign_up(this);
-                    signup.Show();
-                    this.Hide();
                 }
             }
             catch (Exception ex)
@@ -67,12 +47,11 @@ namespace Project_PakcetLogger_Integrative
         
         public void SendOTP()
         {
-            Random rnd = new Random();
-            string otp_email = ReceivedData;
-             int otpcode = rnd.Next(100000, 999999);
+            int otpcode = rnd.Next(100000, 999999);
             string otp_string = otpcode.ToString();
+            string otp_email = ReceivedData;
 
-            
+
             try
             {
                 //used for message for sending the otp email
@@ -80,6 +59,7 @@ namespace Project_PakcetLogger_Integrative
                 message.From.Add(new MailboxAddress("PacketLogger", "puppetemail875@gmail.com"));
                 message.To.Add(new MailboxAddress("User", ReceivedData));
                 message.Subject = "Your OTP Code for PacketLogger";
+
                 // use for the body or text of the data
                 var bodyBuilder = new BodyBuilder();
                 bodyBuilder.TextBody = $"Your OTP code is: {otp_string}";
@@ -112,7 +92,7 @@ namespace Project_PakcetLogger_Integrative
 
 
 
-        private void btn_Confirm_otp_Click(object sender, EventArgs e)
+        private void btn_Confirm_otp_Click(object sender, EventArgs e, int otpcode)
         {
             otp_confirm(otpcode);
         }
@@ -144,6 +124,12 @@ namespace Project_PakcetLogger_Integrative
         
                
             
+        }
+
+        private void btn_Confirm_otp_Click(object sender, EventArgs e)
+        {
+            string otp_input = txt_One_time_Permit.Text.Trim();
+            otp_confirm(int.Parse(otp_input));
         }
     }
 }
