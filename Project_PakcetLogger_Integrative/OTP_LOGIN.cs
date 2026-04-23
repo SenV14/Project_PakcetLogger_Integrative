@@ -16,5 +16,15 @@ namespace Project_PakcetLogger_Integrative
         {
             InitializeComponent();
         }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btn_Confirm_otp_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

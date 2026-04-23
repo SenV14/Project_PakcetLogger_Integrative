@@ -89,6 +89,7 @@
             this.lbl_Resend_code.TabIndex = 11;
             this.lbl_Resend_code.TabStop = true;
             this.lbl_Resend_code.Text = "Resend Code for validation";
+            this.lbl_Resend_code.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbl_Resend_code_LinkClicked);
             // 
             // btn_Confirm_otp
             // 
