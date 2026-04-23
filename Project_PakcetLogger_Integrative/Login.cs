@@ -19,10 +19,10 @@ namespace Project_PakcetLogger_Integrative
         }
 
         public void Opening_Form()
-        {
-            One_Time_Password otp = new One_Time_Password();
-            otp.Show();
-            this.Hide();
+        {   
+            //One_Time_Password otp = new One_Time_Password();
+            //otp.Show();
+            //this.Hide();
         }
         public void Login_Load(object sender, EventArgs e) // Confirmation in opening the OTP form after clicking the "Confirm" button
         {

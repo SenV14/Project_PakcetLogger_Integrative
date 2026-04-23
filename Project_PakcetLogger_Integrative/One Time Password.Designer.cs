@@ -36,11 +36,11 @@
             this.txt_One_time_Permit = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -98,6 +98,7 @@
             this.btn_Confirm_otp.TabIndex = 10;
             this.btn_Confirm_otp.Text = "Confirm";
             this.btn_Confirm_otp.UseVisualStyleBackColor = true;
+            this.btn_Confirm_otp.Click += new System.EventHandler(this.btn_Confirm_otp_Click);
             // 
             // txt_One_time_Permit
             // 
@@ -130,18 +131,6 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Packet Logging \r\nPasscode Authentication";
             // 
-            // pictureBox2
-            // 
-            this.pictureBox2.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
-            this.pictureBox2.Location = new System.Drawing.Point(15, 44);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(260, 157);
-            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox2.TabIndex = 0;
-            this.pictureBox2.TabStop = false;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -152,18 +141,6 @@
             this.label1.Size = new System.Drawing.Size(634, 92);
             this.label1.TabIndex = 1;
             this.label1.Text = "Packet Logger";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
-            this.pictureBox1.Image = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
-            this.pictureBox1.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
-            this.pictureBox1.Location = new System.Drawing.Point(47, 148);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(530, 407);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // button1
             // 
@@ -185,6 +162,30 @@
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
             // 
+            // pictureBox2
+            // 
+            this.pictureBox2.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
+            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
+            this.pictureBox2.Location = new System.Drawing.Point(15, 44);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(260, 157);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox2.TabIndex = 0;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
+            this.pictureBox1.Image = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
+            this.pictureBox1.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
+            this.pictureBox1.Location = new System.Drawing.Point(47, 148);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(530, 407);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
             // One_Time_Password
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -195,6 +196,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "One_Time_Password";
             this.Text = "One_Time_Password";
+            this.Load += new System.EventHandler(this.One_Time_Password_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

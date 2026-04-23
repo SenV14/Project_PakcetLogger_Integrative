@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace Project_PakcetLogger_Integrative
 {
@@ -114,7 +116,7 @@ namespace Project_PakcetLogger_Integrative
                 }
                 else if (password.Length < 8 || password.Any(c => specialCharacters.Contains(specialCharacters)) || email.ToLower().EndsWith("@gmail.com"))
                 { 
-                    One_Time_Password otp = new One_Time_Password();
+                    One_Time_Password otp = new One_Time_Password(email);
                     otp.Show();
                     this.Hide();
                 }     
