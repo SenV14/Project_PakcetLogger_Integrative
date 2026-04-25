@@ -20,6 +20,8 @@ namespace Project_PakcetLogger_Integrative
         public string password_2nd { get; set; }
         //create a variable for the otp code, so that it can be used in the otp_confirm method
         Random rnd = new Random();
+        // this if the global public variable for the otp code, so that it can be used in the otp_confirm method
+        private string otp_code_global;
         
 
         //limit for the otp code, if the user input the wrong otp code more than 3 times, the user will be exited in this site
@@ -48,7 +50,7 @@ namespace Project_PakcetLogger_Integrative
         public void SendOTP()
         {
             int otpcode = rnd.Next(100000, 999999);
-            string otp_string = otpcode.ToString();
+            otp_code_global = otpcode.ToString();
             string otp_email = ReceivedData;
 
 
@@ -62,7 +64,7 @@ namespace Project_PakcetLogger_Integrative
 
                 // use for the body or text of the data
                 var bodyBuilder = new BodyBuilder();
-                bodyBuilder.TextBody = $"Your OTP code is: {otp_string}";
+                bodyBuilder.TextBody = $"Your OTP code is: {otp_code_global}";
                 message.Body = bodyBuilder.ToMessageBody();
                 // used for sending the email using the SMTP client
                 using (var client = new SmtpClient())
@@ -92,9 +94,40 @@ namespace Project_PakcetLogger_Integrative
 
 
 
-        private void btn_Confirm_otp_Click(object sender, EventArgs e, int otpcode)
+        private void btn_Confirm_otp_Click(object sender, EventArgs e)
         {
-            otp_confirm(otpcode);
+            try
+            {
+                if (string.IsNullOrEmpty(txt_One_time_Permit.Text))
+                {
+                    MessageBox.Show("Please enter the OTP code.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Limit_Reset++;
+                    return;
+                }
+                else if (txt_One_time_Permit.Text == otp_code_global)
+                {
+
+                    MessageBox.Show("Confirmation of the random number is correct, You will now go.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Hide();
+                    OTP_LOGIN oTP_LOGIN = new OTP_LOGIN();
+                    oTP_LOGIN.Show();
+
+                else if (Limit_Reset > 3)
+                {
+                    Limit_Reset++;
+                    MessageBox.Show($"You have exceeded the amount of tries on the otp, you will be exited in this site.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.Close();
+                }
+                
+                else
+                {
+                    MessageBox.Show("There is an error, try again", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while confirming the OTP code. Please try again. {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void One_Time_Password_Load(object sender, EventArgs e)
@@ -126,10 +159,6 @@ namespace Project_PakcetLogger_Integrative
             
         }
 
-        private void btn_Confirm_otp_Click(object sender, EventArgs e)
-        {
-            string otp_input = txt_One_time_Permit.Text.Trim();
-            otp_confirm(int.Parse(otp_input));
-        }
+      
     }
 }
