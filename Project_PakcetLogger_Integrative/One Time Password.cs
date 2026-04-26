@@ -30,13 +30,14 @@ namespace Project_PakcetLogger_Integrative
 
         //limit for the otp code, if the user input the wrong otp code more than 3 times, the user will be exited in this site
         int Limit_Reset = 0;
+
         public One_Time_Password(string email, string password)
         {       
             InitializeComponent();
             ReceivedData = email;
             password_2nd = password;
         }
-
+ 
         public void otp_confirm(int otpcode_confirm)
         {
             try
@@ -110,6 +111,7 @@ namespace Project_PakcetLogger_Integrative
                 {
                     MessageBox.Show("Please enter the OTP code.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Limit_Reset++;
+                    SendOTP();
                     return;
                 }
                 else if (txt_One_time_Permit.Text == otp_code_global)
@@ -123,13 +125,15 @@ namespace Project_PakcetLogger_Integrative
                 }
                 else if (Limit_Reset > 3)
                 {
-                    Limit_Reset++;
+                    
+
                     MessageBox.Show($"You have exceeded the amount of tries on the otp, you will be exited in this site.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                 }
                 else
                 {
                     MessageBox.Show("There is an error, try again", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    SendOTP();
                     Limit_Reset++;
                 }
             }
@@ -176,7 +180,7 @@ namespace Project_PakcetLogger_Integrative
                 string Code = otp_code;
                 string Email = receivedData;    
                 string Password = password;
-                string @database = "server=localhost; database=SampleDB; uid=root; pwd=your_password; port=3306; SslMode=None;";      
+                string @database = "Server=127.0.0.1;Port=3306;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;";      
                 var databases = new MySqlConnection(@database);
                 databases.Open();
                 if (databases.State == ConnectionState.Open)
@@ -196,8 +200,10 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
-                string @database = "server=localhost; database=SampleDB; uid=root; pwd=your_password; port=3306; SslMode=None;";
-                string select_method = "ISSERT INTO packetlogger_users (packet_gmail, packet_password, password) VALUES (@Code, @Email, @Password)";
+                
+                DateTime patch_date = DateTime.Now;
+                string @database = "Server=127.0.0.1;Port=3306;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;";
+                string select_method = "INSERT INTO packetlogger_users (packet_gmail, packet_password, OTP_PACKET) VALUES (@Email, @Password,@Code)";
                 using(MySqlConnection @connection = new MySqlConnection(@database))
                 {
                     connection.Open();
@@ -207,9 +213,13 @@ namespace Project_PakcetLogger_Integrative
                         INSERT.Parameters.AddWithValue("@Email", Email);
                         INSERT.Parameters.AddWithValue("@Password", Password);
                         INSERT.ExecuteNonQuery();
+                        OTP_LOGIN otp_login = new OTP_LOGIN();
+                        otp_login.Show();
+                        this.Hide();
                     }
                   
                 }
+              
             }
             catch (Exception ex)
             {

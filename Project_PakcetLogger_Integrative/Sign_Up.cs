@@ -56,15 +56,16 @@ namespace Project_PakcetLogger_Integrative
                 {
                     try
                     {
-                        string @database = "server=localhost; database=SampleDB; uid=root; pwd=your_password; port=3306; SslMode=None;";
+                        string @database = "Server=127.0.0.1;Port=3306;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD";
                         string select_method = "SELECT packet_gmail FROM packetlogger_users WHERE packet_gmail = @Email LIMIT 1";
                         using (MySqlConnection @connection = new MySqlConnection(@database))
                         {
                             try
-                            {
+                            {   
                                 @connection.Open();
                                 using (MySqlCommand command = new MySqlCommand(select_method, @connection))
                                 {
+                                    
                                     command.Parameters.AddWithValue("@Email", email);
                                     command.Parameters.AddWithValue("@Password", password);
                                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -74,9 +75,9 @@ namespace Project_PakcetLogger_Integrative
                                             MessageBox.Show("This email is already registered.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                             return;
                                         }
-                                        else
+                                        else if (!reader.HasRows)
                                         {
-                                            MessageBox.Show("Email is nmot available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            MessageBox.Show("Email is not available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                             One_Time_Password otp = new One_Time_Password(email, password);
                                             otp.Show();
                                             this.Hide();
@@ -87,7 +88,7 @@ namespace Project_PakcetLogger_Integrative
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show("An error occurred while inserting data into the database: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show("An error occurred while checking data from storage: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
