@@ -1,21 +1,25 @@
-﻿using System;
+﻿using MailKit.Net.Smtp;
+using MimeKit;
+using MySql.Data.MySqlClient;
+using Mysqlx.Crud;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
-using MailKit.Net.Smtp;
-using MimeKit;
-using Mysqlx.Crud;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Project_PakcetLogger_Integrative
 {
     public partial class One_Time_Password : Form
     {
+        // used for getting password and signup user name in the signup form, so that it can be used in the otp_confirm method
         public string ReceivedData { get; set; }
         public string password_2nd { get; set; }
         //create a variable for the otp code, so that it can be used in the otp_confirm method
@@ -32,6 +36,7 @@ namespace Project_PakcetLogger_Integrative
             ReceivedData = email;
             password_2nd = password;
         }
+
         public void otp_confirm(int otpcode_confirm)
         {
             try
@@ -47,6 +52,7 @@ namespace Project_PakcetLogger_Integrative
             }
         }
         
+        //used for sending otp using mime and mail packages
         public void SendOTP()
         {
             int otpcode = rnd.Next(100000, 999999);
@@ -70,7 +76,9 @@ namespace Project_PakcetLogger_Integrative
                 using (var client = new SmtpClient())
                 {
                     client.Connect("smtp.gmail.com", 587, false);
+                    // must use your own client email to be the sender
                     client.Authenticate("puppetemail875@gmail.com", "aafjpmcwbqrszemq");
+                    // .send used for sending to the receiver
                     client.Send(message);
                     client.Disconnect(true);
                    
@@ -107,6 +115,9 @@ namespace Project_PakcetLogger_Integrative
                 else if (txt_One_time_Permit.Text == otp_code_global)
                 {
                     MessageBox.Show("Confirmation of the random number is correct, You will now go.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //going to database function to open the database local
+                    Database_Confirm_Open(otp_code_global,ReceivedData, password_2nd);
+
                     this.Hide();
                     
                 }
@@ -128,12 +139,14 @@ namespace Project_PakcetLogger_Integrative
             }
         }
 
+        //automatic open of function to send otp
         private void One_Time_Password_Load(object sender, EventArgs e)
         {
 
             SendOTP();
         }
 
+        // linklabel to resend 3-4 times when forgotten otp code, if the user click the linklabel more than 3 times, the user will be exited in this site
         private void lbl_Resend_code_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             try
@@ -153,10 +166,60 @@ namespace Project_PakcetLogger_Integrative
                 MessageBox.Show($"An error occurred while sending the OTP email. Please check your email address and try again. {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         
-               
+            
             
         }
+        public void Database_Confirm_Open(string otp_code, string receivedData, string password)
+        {
+            try
+            {
+                string Code = otp_code;
+                string Email = receivedData;    
+                string Password = password;
+                string @database = "server=localhost; database=SampleDB; uid=root; pwd=your_password; port=3306; SslMode=None;";      
+                var databases = new MySqlConnection(@database);
+                databases.Open();
+                if (databases.State == ConnectionState.Open)
+                {
+                    MessageBox.Show("You are in, Congratulations! on your own", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DatabaseCommand(Code, Email, Password);
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while connecting to the database. Please check your database connection and try again. {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
-      
+        }
+        public void DatabaseCommand(string Code,string  Email, string Password)
+        {
+            try
+            {
+                string @database = "server=localhost; database=SampleDB; uid=root; pwd=your_password; port=3306; SslMode=None;";
+                string select_method = "ISSERT INTO packetlogger_users (packet_gmail, packet_password, password) VALUES (@Code, @Email, @Password)";
+                using(MySqlConnection @connection = new MySqlConnection(@database))
+                {
+                    connection.Open();
+                    using (MySqlCommand INSERT = new MySqlCommand(select_method, connection))
+                    {
+                        INSERT.Parameters.AddWithValue("@Code", Code);
+                        INSERT.Parameters.AddWithValue("@Email", Email);
+                        INSERT.Parameters.AddWithValue("@Password", Password);
+                        INSERT.ExecuteNonQuery();
+                    }
+                  
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while executing the database command. Please check your database command and try again. {ex}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
     }
 }

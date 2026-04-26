@@ -44,6 +44,7 @@ namespace Project_PakcetLogger_Integrative
                 string specialCharacters = @"!@#$%^&*()_+-=[]{}|;':"",.<>/?`~";
                 if (!email.ToLower().EndsWith("@gmail.com") || string.IsNullOrEmpty(email) || password.Length < 8 || !password.Any(c => specialCharacters.Contains(specialCharacters)))
                 {
+
                     MessageBox.Show("Please enter a valid Gmail address.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txt_Password.Clear();
                     txt_Signup.Clear();
@@ -52,11 +53,49 @@ namespace Project_PakcetLogger_Integrative
 
                 }
                 else if (password.Length < 8 || password.Any(c => specialCharacters.Contains(specialCharacters)) || email.ToLower().EndsWith("@gmail.com"))
-                { 
-                    One_Time_Password otp = new One_Time_Password(email, password);
-                    otp.Show();
-                    this.Hide();
-                }     
+                {
+                    try
+                    {
+                        string @database = "server=localhost; database=SampleDB; uid=root; pwd=your_password; port=3306; SslMode=None;";
+                        string select_method = "SELECT packet_gmail FROM packetlogger_users WHERE packet_gmail = @Email LIMIT 1";
+                        using (MySqlConnection @connection = new MySqlConnection(@database))
+                        {
+                            try
+                            {
+                                @connection.Open();
+                                using (MySqlCommand command = new MySqlCommand(select_method, @connection))
+                                {
+                                    command.Parameters.AddWithValue("@Email", email);
+                                    command.Parameters.AddWithValue("@Password", password);
+                                    using (MySqlDataReader reader = command.ExecuteReader())
+                                    {
+                                        if (reader.HasRows)
+                                        {
+                                            MessageBox.Show("This email is already registered.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            MessageBox.Show("Email is nmot available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            One_Time_Password otp = new One_Time_Password(email, password);
+                                            otp.Show();
+                                            this.Hide();
+                                        }
+                                    }
+
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("An error occurred while inserting data into the database: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred while processing the sign-up: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
             catch (Exception ex)
             {

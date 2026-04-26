@@ -12,7 +12,8 @@ namespace Project_PakcetLogger_Integrative
 {
     public partial class OTP_LOGIN : Form
     {
-        public OTP_LOGIN()
+
+        public OTP_LOGIN(string otp_code, string email, string password)
         {
             InitializeComponent();
         }
