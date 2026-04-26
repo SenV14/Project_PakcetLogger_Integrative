@@ -106,22 +106,20 @@ namespace Project_PakcetLogger_Integrative
                 }
                 else if (txt_One_time_Permit.Text == otp_code_global)
                 {
-
-                    MessageBox.Show("Confirmation of the random number is correct, You will now go.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Confirmation of the random number is correct, You will now go.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Hide();
-                    OTP_LOGIN oTP_LOGIN = new OTP_LOGIN();
-                    oTP_LOGIN.Show();
-
+                    
+                }
                 else if (Limit_Reset > 3)
                 {
                     Limit_Reset++;
                     MessageBox.Show($"You have exceeded the amount of tries on the otp, you will be exited in this site.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Close();
                 }
-                
                 else
                 {
                     MessageBox.Show("There is an error, try again", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Limit_Reset++;
                 }
             }
             catch (Exception ex)
