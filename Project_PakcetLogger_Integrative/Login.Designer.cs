@@ -129,7 +129,7 @@
             // 
             // txt_Signin_Email
             // 
-            this.txt_Signin_Email.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_Signin_Email.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt_Signin_Email.Location = new System.Drawing.Point(35, 210);
             this.txt_Signin_Email.Multiline = true;
             this.txt_Signin_Email.Name = "txt_Signin_Email";
@@ -138,7 +138,7 @@
             // 
             // txt_password_login
             // 
-            this.txt_password_login.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt_password_login.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txt_password_login.Location = new System.Drawing.Point(35, 336);
             this.txt_password_login.Multiline = true;
             this.txt_password_login.Name = "txt_password_login";

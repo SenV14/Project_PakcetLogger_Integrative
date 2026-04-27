@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OTP_LOGIN));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.lbl_Resend_code = new System.Windows.Forms.LinkLabel();
@@ -50,7 +49,6 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Purple;
-            this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.pictureBox1);
@@ -60,15 +58,6 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(1355, 347);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -135,9 +124,9 @@
             this.label3.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.label3.Location = new System.Drawing.Point(33, 260);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(338, 33);
+            this.label3.Size = new System.Drawing.Size(309, 33);
             this.label3.TabIndex = 4;
-            this.label3.Text = "Email/Phone number";
+            this.label3.Text = "One time Password";
             // 
             // label2
             // 
@@ -196,7 +185,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "OTP_LOGIN";
             this.Text = "OTP_LOGIN";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Load += new System.EventHandler(this.OTP_LOGIN_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -210,7 +199,6 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.LinkLabel lbl_Resend_code;

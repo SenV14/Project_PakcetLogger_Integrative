@@ -78,7 +78,7 @@ namespace Project_PakcetLogger_Integrative
                                         else if (!reader.HasRows)
                                         {
                                             MessageBox.Show("Email is not available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                            One_Time_Password otp = new One_Time_Password(email, password);
+                                            OTP_LOGIN otp = new OTP_LOGIN(email, password);
                                             otp.Show();
                                             this.Hide();
                                         }

@@ -213,8 +213,8 @@ namespace Project_PakcetLogger_Integrative
                         INSERT.Parameters.AddWithValue("@Email", Email);
                         INSERT.Parameters.AddWithValue("@Password", Password);
                         INSERT.ExecuteNonQuery();
-                        OTP_LOGIN otp_login = new OTP_LOGIN();
-                        otp_login.Show();
+                        Login login = new Login();
+                        login.Show();
                         this.Hide();
                     }
                   
