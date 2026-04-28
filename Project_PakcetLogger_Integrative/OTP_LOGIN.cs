@@ -13,7 +13,7 @@ namespace Project_PakcetLogger_Integrative
 {
     public partial class OTP_LOGIN : Form
     {
-
+        
         public string email { get; set; }
         public string password { get; set; }
         public OTP_LOGIN(string email, string password)
@@ -25,14 +25,37 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
-                string connection = "";
-                string query = "SELECT packet_gmail, packet_password FROM packetlogger_users WHERE packet_gmail = @Email AND packet_password = @Password LIMIT 1";
+                string OTP_permit = txt_One_time_Permit.Text;
+                string connection = "Server=127.0.0.1;Port=3306;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;"; ;
+                string query = "SELECT packet_gmail, packet_password FROM packetlogger_users WHERE packet_gmail = @Email AND OTP_PACKET = @OTP LIMIT 1";
                 using (MySqlConnection connect = new MySqlConnection(connection))
                 {
-                    using(MySqlCommand command = new MySqlCommand(query, connect))
+                    using (MySqlCommand command = new MySqlCommand(query, connect))
                     {
-                        command.Parameters//
-                    }
+                        command.Parameters.AddWithValue("@Email", email);
+                        command.Parameters.AddWithValue("@OTP", OTP_permit);
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                string emailed = reader.GetString("packet_gmail");
+                                string otp = reader.GetString("OTP_PACKET");
+                                if (emailed == email && otp == OTP_permit)
+                                {
+                                    MessageBox.Show("OTP verified successfully! Welcome, " + emailed, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    Packet_Logger loggerForm = new Packet_Logger();
+                                    loggerForm.Show();
+                                    this.Hide();
+                                    
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Invalid OTP. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    txt_One_time_Permit.Clear();
+                                }
+                            }
+                        }
+                }
             }
             catch (Exception ex)
             {
