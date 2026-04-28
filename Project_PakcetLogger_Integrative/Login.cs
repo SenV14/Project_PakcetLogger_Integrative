@@ -54,7 +54,7 @@ namespace Project_PakcetLogger_Integrative
                                     MessageBox.Show("Password Correct and successfully logged in!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     MessageBox.Show("Please wait while we redirect you to the OTP form.", "Redirecting", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     this.Hide();
-                                    OTP_LOGIN otpForm = new OTP_LOGIN();
+                                    OTP_LOGIN otpForm = new OTP_LOGIN(email, password);
                                     otpForm.Show();
                                 }
                                 else

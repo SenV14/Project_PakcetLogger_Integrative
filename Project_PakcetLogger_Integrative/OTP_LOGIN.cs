@@ -46,7 +46,7 @@ namespace Project_PakcetLogger_Integrative
                                     Packet_Logger loggerForm = new Packet_Logger();
                                     loggerForm.Show();
                                     this.Hide();
-                                    
+
                                 }
                                 else
                                 {
@@ -55,6 +55,7 @@ namespace Project_PakcetLogger_Integrative
                                 }
                             }
                         }
+                    }
                 }
             }
             catch (Exception ex)
