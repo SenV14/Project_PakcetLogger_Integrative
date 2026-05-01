@@ -170,7 +170,26 @@ namespace Project_PakcetLogger_Integrative
                 string command = "SELECT packet_gmail FROM packetlogger_users WHERE packet_gmail = @Email LIMIT 1";
                 using (MySqlConnection connection = new MySqlConnection(database)) 
                 {
-                    //database.Open
+                    connection.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(command, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@Email", email);
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                MessageBox.Show("This email is already registered.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            else if (!reader.HasRows)
+                            {
+                                MessageBox.Show("Email is not available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                OTP_LOGIN otp = new OTP_LOGIN(email, null);
+                                otp.Show();
+                                this.Hide();
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
