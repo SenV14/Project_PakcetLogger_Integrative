@@ -23,6 +23,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.UI.WebControls.WebParts;
 using System.Windows.Forms;
+using Microsoft.Extensions.Configuration;
+using Google.Apis.Oauth2.v2;
 
 
 namespace Project_PakcetLogger_Integrative
@@ -31,12 +33,14 @@ namespace Project_PakcetLogger_Integrative
     {
       
         private Form _loginform;
+        private IConfiguration _config;
         public Sign_up(Form login)
         {
             InitializeComponent();
             _loginform = login;
+            //made a configuration builder to read the json file
+            _config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 
-       
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -126,15 +130,15 @@ namespace Project_PakcetLogger_Integrative
             {
 
                 // cancellation token
-                CancellationTokenSource cancel_token = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+                CancellationTokenSource cancel_token = new CancellationTokenSource(TimeSpan.FromSeconds(10));
                 //Holding the id and client secret for api
                 
 
                 // using Client secrets to authenticate the user and get the credentials
-                new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret };
+                new ClientSecrets { ClientId = _config["GoogleAuth:ClientId"], ClientSecret = _config["GoogleAuth:ClientSecret"] };
                 UserCredential User_Credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     // used for the client secrets and the scopes for the API access
-                    new ClientSecrets { ClientId = clientId, ClientSecret = clientSecret },
+                    new ClientSecrets { ClientId = _config["GoogleAuth:ClientId"], ClientSecret = _config["GoogleAuth:ClientSecret"] },
                     // using this to get email user premissions
                     new[] { "email" },
                     "user",
@@ -142,10 +146,12 @@ namespace Project_PakcetLogger_Integrative
                     cancel_token.Token
                         
                 );
-                // use for getting the gmail address
-                
-
-
+                // use for getting the gmail address to put inside the mysql workbench
+                var auth_service = new Google.Apis.Oauth2.v2.Oauth2Service(new Google.Apis.Services.BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = User_Credentials,
+                    ApplicationName = "PacketLogger"
+                });
 
             }
             catch (Exception ex)
