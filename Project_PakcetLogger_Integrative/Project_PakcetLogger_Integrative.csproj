@@ -246,6 +246,7 @@
       <DependentUpon>Sign_Up.cs</DependentUpon>
     </EmbeddedResource>
     <None Include=".gitignore" />
+    <None Include="AUTHENTICATION.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

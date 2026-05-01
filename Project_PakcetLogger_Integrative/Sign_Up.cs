@@ -128,30 +128,25 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
+                //
+                CancellationTokenSource ctc = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
-                // cancellation token
-                CancellationTokenSource cancel_token = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-                //Holding the id and client secret for api
-                
+                CancellationToken token = ctc.Token;
+                var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("AUTHENTICATION.json").Build();
 
-                // using Client secrets to authenticate the user and get the credentials
-                new ClientSecrets { ClientId = _config["GoogleAuth:ClientId"], ClientSecret = _config["GoogleAuth:ClientSecret"] };
-                UserCredential User_Credentials = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    // used for the client secrets and the scopes for the API access
-                    new ClientSecrets { ClientId = _config["GoogleAuth:ClientId"], ClientSecret = _config["GoogleAuth:ClientSecret"] },
-                    // using this to get email user premissions
-                    new[] { "email" },
-                    "user",
-                    // time limit for the user to authenticate and get the credentials
-                    cancel_token.Token
-                        
-                );
-                // use for getting the gmail address to put inside the mysql workbench
-                var auth_service = new Google.Apis.Oauth2.v2.Oauth2Service(new Google.Apis.Services.BaseClientService.Initializer()
+                var secrets = new ClientSecrets
                 {
-                    HttpClientInitializer = User_Credentials,
-                    ApplicationName = "PacketLogger"
-                });
+                    ClientId = config["ClientId"],
+                    ClientSecret = config["ClientSecret"]
+                };
+
+                UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    secrets,
+                    new[] { Oauth2Service.Scope.UserinfoEmail },
+                    "user",
+                    token,
+                    new FileDataStore("GoogleOAuth")
+                );
 
             }
             catch (Exception ex)
