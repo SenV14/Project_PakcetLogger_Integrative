@@ -132,17 +132,18 @@ namespace Project_PakcetLogger_Integrative
                 CancellationTokenSource ctc = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
                 CancellationToken token = ctc.Token;
+                // this is used to find the json file
                 var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("AUTHENTICATION.json", optional:false).Build();
-
+                // creating variable for the client and finding client secret in file in order to push rep and authenticate
                 var secrets = new ClientSecrets
                 {
                     ClientId = config["Installed:client_id"],
                     ClientSecret = config["Installed:client_secret"]
                 };
-                //using User credential for signing in with google account and requesting the email scope
+                //using User credential for signing in with google account and requesting the email scope basically user consent
                 UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     secrets,
-                    new[] { Oauth2Service.Scope.UserinfoEmail },
+                    new[] { Oauth2Service.Scope.UserinfoEmail }, //permission to get the email of the user
                     "user",
                     token,
                     new FileDataStore("GoogleOAuth")
@@ -153,6 +154,7 @@ namespace Project_PakcetLogger_Integrative
                     HttpClientInitializer = credential,
                     ApplicationName = "integ-project"
                 });
+                // used to get the userinfo in the credentials and then get the email from the userinfo
                 Userinfo userinfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
                 string email = userinfo.Email;
                 Sign_up_Load(email);
@@ -167,14 +169,14 @@ namespace Project_PakcetLogger_Integrative
             try
             {
                 string database = "Server = 127.0.0.1; Port = 3306; Database = packetlogger_login; Uid = root; Pwd = P@55W0RD";
-                string command = "SELECT packet_gmail FROM packetlogger_users WHERE packet_gmail = @Email LIMIT 1";
+                string command = "SELECT email_info FROM packet_logger_authentication WHERE email_info = @Email LIMIT 1";
                 using (MySqlConnection connection = new MySqlConnection(database)) 
                 {
                     connection.Open();
-                    using (MySqlCommand cmd = new MySqlCommand(command, connection))
+                    using (MySqlCommand select = new MySqlCommand(command, connection))
                     {
-                        cmd.Parameters.AddWithValue("@Email", email);
-                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        select.Parameters.AddWithValue("@Email", email);
+                        using (MySqlDataReader reader = select.ExecuteReader())
                         {
                             if (reader.HasRows)
                             {
