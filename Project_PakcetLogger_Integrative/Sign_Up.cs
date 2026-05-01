@@ -25,6 +25,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Windows.Forms;
 using Microsoft.Extensions.Configuration;
 using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
 
 
 namespace Project_PakcetLogger_Integrative
@@ -33,13 +34,12 @@ namespace Project_PakcetLogger_Integrative
     {
       
         private Form _loginform;
-        private IConfiguration _config;
+
         public Sign_up(Form login)
         {
             InitializeComponent();
             _loginform = login;
-            //made a configuration builder to read the json file
-            _config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+
 
         }
 
@@ -132,14 +132,14 @@ namespace Project_PakcetLogger_Integrative
                 CancellationTokenSource ctc = new CancellationTokenSource(TimeSpan.FromSeconds(30));
 
                 CancellationToken token = ctc.Token;
-                var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("AUTHENTICATION.json").Build();
+                var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("AUTHENTICATION.json", optional:false).Build();
 
                 var secrets = new ClientSecrets
                 {
-                    ClientId = config["ClientId"],
-                    ClientSecret = config["ClientSecret"]
+                    ClientId = config["Installed:client_id"],
+                    ClientSecret = config["Installed:client_secret"]
                 };
-
+                //using User credential for signing in with google account and requesting the email scope
                 UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     secrets,
                     new[] { Oauth2Service.Scope.UserinfoEmail },
@@ -147,14 +147,22 @@ namespace Project_PakcetLogger_Integrative
                     token,
                     new FileDataStore("GoogleOAuth")
                 );
-
+                // getting the email after successful authentication and putting in mysqlworkbench for double security
+                var oauth2Service = new Oauth2Service(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "integ-project"
+                });
+                Userinfo userinfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
+                string email = userinfo.Email;
+                Sign_up_Load(email);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while handling the picture box click: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void Sign_up_Load(object sender, EventArgs e)
+        private void Sign_up_Load(string email)
         {
             try
             {
