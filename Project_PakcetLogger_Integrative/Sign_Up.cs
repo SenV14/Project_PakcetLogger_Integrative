@@ -26,13 +26,17 @@ using System.Windows.Forms;
 using Microsoft.Extensions.Configuration;
 using Google.Apis.Oauth2.v2;
 using Google.Apis.Oauth2.v2.Data;
+using Octokit;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using System.Drawing.Text;
 
 
 namespace Project_PakcetLogger_Integrative
 {
     public partial class Sign_up : Form
     {
-      
+
         private Form _loginform;
 
         public Sign_up(Form login)
@@ -81,11 +85,11 @@ namespace Project_PakcetLogger_Integrative
                         using (MySqlConnection @connection = new MySqlConnection(@database))
                         {
                             try
-                            {   
+                            {
                                 @connection.Open();
                                 using (MySqlCommand command = new MySqlCommand(select_method, @connection))
                                 {
-                                    
+
                                     command.Parameters.AddWithValue("@Email", email);
                                     command.Parameters.AddWithValue("@Password", password);
                                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -133,7 +137,7 @@ namespace Project_PakcetLogger_Integrative
 
                 CancellationToken token = ctc.Token;
                 // this is used to find the json file
-                var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("AUTHENTICATION.json", optional:false).Build();
+                var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("AUTHENTICATION.json", optional: false).Build();
                 // creating variable for the client and finding client secret in file in order to push rep and authenticate
                 var secrets = new ClientSecrets
                 {
@@ -170,7 +174,7 @@ namespace Project_PakcetLogger_Integrative
             {
                 string database = "Server = 127.0.0.1; Port = 3306; Database = packetlogger_login; Uid = root; Pwd = P@55W0RD";
                 string command = "SELECT email_info FROM packet_logger_authentication WHERE email_info = @Email LIMIT 1";
-                using (MySqlConnection connection = new MySqlConnection(database)) 
+                using (MySqlConnection connection = new MySqlConnection(database))
                 {
                     connection.Open();
                     using (MySqlCommand select = new MySqlCommand(command, connection))
@@ -197,6 +201,40 @@ namespace Project_PakcetLogger_Integrative
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while loading the Sign-up form: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void pictureBox4_Click(object sender, EventArgs e)
+        {
+            pictureBox4.Enabled = false;
+            try
+            {
+                var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("github.json", optional: false)
+                .Build();
+
+                var clientId = config["GitHub:ClientId"];
+                var clientSecret = config["GitHub:ClientSecret"];
+                var client = new GitHubClient(new ProductHeaderValue("Cybersec-integ"));
+
+                var request = new OauthLoginRequest(clientId)
+                {
+                    Scopes = { "user:email" }
+                };
+                Uri loginURL = client.Oauth.GetGitHubLoginUrl(request);
+
+                System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo(loginURL.ToString())
+                {
+                    UseShellExecute = true
+                }
+                    );
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while handling the picture box click: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

@@ -1,0 +1,12 @@
+﻿{
+    "GitHub": {
+        "ClientId": "",
+        "ClientSecret": "",
+
+        "RepositoryName": "Cybersec-integ",
+        "Owner": "puppetemail875-gif"
+    },
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=localhost;Database=AuthDb;User=root;Password=yourpassword;"
+    }
+}
