@@ -45,7 +45,7 @@ namespace Project_PakcetLogger_Integrative
         {
 
 
-            string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;";
+            string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
             string @selecting_method = "SELECT packet_gmail, packet_password from packetlogger_users where packet_gmail = @gmail AND packet_password = @password LIMIT 1";
             string email = email_confirm;
             string password = password_confirm;

@@ -1,1 +1,12 @@
-﻿
+﻿{
+    "GitHub": {
+        "ClientId": "Ov23linA7wwBjzX3EDBj",
+        "ClientSecret": "9644c40bfd514d881f3168952474fd16a64f6b13",
+        "RedirectUri": "https://localhost:5001/signin-github/",
+        "RepositoryName": "Cybersec-integ",
+        "Owner": "puppetemail875-gif"
+    },
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=localhost;Database=AuthDb;User=root;Password=yourpassword;"
+    }
+}

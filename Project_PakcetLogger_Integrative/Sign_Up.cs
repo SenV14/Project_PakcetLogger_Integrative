@@ -80,7 +80,7 @@ namespace Project_PakcetLogger_Integrative
                 {
                     try
                     {
-                        string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD";
+                        string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@";
                         string select_method = "SELECT packet_gmail FROM packetlogger_users WHERE packet_gmail = @Email LIMIT 1";
                         using (MySqlConnection @connection = new MySqlConnection(@database))
                         {
@@ -102,7 +102,7 @@ namespace Project_PakcetLogger_Integrative
                                         else if (!reader.HasRows)
                                         {
                                             MessageBox.Show("Email is not available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                            OTP_LOGIN otp = new OTP_LOGIN(email, password);
+                                            One_Time_Password otp = new One_Time_Password(email, password);
                                             otp.Show();
                                             this.Hide();
                                         }
@@ -172,7 +172,7 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
-                string database = "Server = 127.0.0.1; Port = 3308; Database = packetlogger_login; Uid = root; Pwd = P@55W0RD";
+                string database = "Server = 127.0.0.1; Port = 3308; Database = packetlogger_login; Uid = root; Pwd = p@55w0rd23!4@";
                 string command = "SELECT email_info FROM packet_logger_authentication WHERE email_info = @Email LIMIT 1";
                 using (MySqlConnection connection = new MySqlConnection(database))
                 {

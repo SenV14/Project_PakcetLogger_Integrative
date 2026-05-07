@@ -16,7 +16,7 @@ namespace Project_PakcetLogger_Integrative
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Packet_Logger());
+            Application.Run(new Login());
         }
     }
 }

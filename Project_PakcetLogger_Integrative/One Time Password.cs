@@ -180,7 +180,7 @@ namespace Project_PakcetLogger_Integrative
                 string Code = otp_code;
                 string Email = receivedData;    
                 string Password = password;
-                string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;";      
+                string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";      
                 var databases = new MySqlConnection(@database);
                 databases.Open();
                 if (databases.State == ConnectionState.Open)
@@ -202,7 +202,7 @@ namespace Project_PakcetLogger_Integrative
             {
                 
                 DateTime patch_date = DateTime.Now;
-                string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;";
+                string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
                 string select_method = "INSERT INTO packetlogger_users (packet_gmail, packet_password, OTP_PACKET) VALUES (@Email, @Password,@Code)";
                 using(MySqlConnection @connection = new MySqlConnection(@database))
                 {
