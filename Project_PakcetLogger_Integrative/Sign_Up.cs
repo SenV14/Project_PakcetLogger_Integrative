@@ -66,7 +66,7 @@ namespace Project_PakcetLogger_Integrative
                 string email = txt_Signup.Text.Trim();
                 string password = txt_Password.Text.Trim();
                 string specialCharacters = @"!@#$%^&*()_+-=[]{}|;':\"",.<>/?`~";
-                if (!email.ToLower().EndsWith("@gmail.com") || string.IsNullOrEmpty(email) || password.Length < 8 || !password.Any(c => specialCharacters.Contains(specialCharacters)))
+                if (!email.ToLower().EndsWith("@gmail.com") || string.IsNullOrEmpty(email) || password.Length < 8 || !password.Any(c => specialCharacters.Contains(c)))
                 {
 
                     MessageBox.Show("Please enter a valid Gmail address.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -101,8 +101,9 @@ namespace Project_PakcetLogger_Integrative
                                         }
                                         else if (!reader.HasRows)
                                         {
-                                            MessageBox.Show("Email is not available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                            One_Time_Password otp = new One_Time_Password(email, password);
+                                            MessageBox.Show("Email is available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                                            One_Time_Password otp = new One_Time_Password(email, hashedPassword);
                                             otp.Show();
                                             this.Hide();
                                         }

@@ -13,6 +13,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Project_PakcetLogger_Integrative
@@ -29,7 +30,7 @@ namespace Project_PakcetLogger_Integrative
         
 
         //limit for the otp code, if the user input the wrong otp code more than 3 times, the user will be exited in this site
-        int Limit_Reset = 0;
+        private int Limit_Reset = 0;
 
         public One_Time_Password(string email, string password)
         {       
@@ -56,9 +57,17 @@ namespace Project_PakcetLogger_Integrative
         //used for sending otp using mime and mail packages
         public void SendOTP()
         {
-            int otpcode = rnd.Next(100000, 999999);
-            otp_code_global = otpcode.ToString();
-            string otp_email = ReceivedData;
+            string otpCode;
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                byte[] bytes = new byte[4];
+                rng.GetBytes(bytes);
+                int value = BitConverter.ToInt32(bytes, 0);
+                // This math ensures a 6-digit number between 100000 and 999999
+                otpCode = (Math.Abs(value % 900000) + 100000).ToString();
+            }
+            otp_code_global = otpCode;
+
 
 
             try

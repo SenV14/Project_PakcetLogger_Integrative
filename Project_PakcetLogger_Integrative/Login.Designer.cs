@@ -144,6 +144,7 @@
             this.txt_password_login.Location = new System.Drawing.Point(35, 336);
             this.txt_password_login.Multiline = true;
             this.txt_password_login.Name = "txt_password_login";
+            this.txt_password_login.PasswordChar = '*';
             this.txt_password_login.Size = new System.Drawing.Size(564, 66);
             this.txt_password_login.TabIndex = 7;
             // 
