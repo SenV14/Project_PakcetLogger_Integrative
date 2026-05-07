@@ -30,6 +30,7 @@ namespace Project_PakcetLogger_Integrative
                 string query = "SELECT packet_gmail, packet_password FROM packetlogger_users WHERE packet_gmail = @Email AND OTP_PACKET = @OTP LIMIT 1";
                 using (MySqlConnection connect = new MySqlConnection(connection))
                 {
+                    connect.Open();
                     using (MySqlCommand command = new MySqlCommand(query, connect))
                     {
                         command.Parameters.AddWithValue("@Email", email);

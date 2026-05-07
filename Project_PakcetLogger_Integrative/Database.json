@@ -1,0 +1,9 @@
+﻿{
+    "ConnectionStrings": {
+        "DefaultConnection": "Server=127.0.0.1;Port=3306;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;SslMode=Required;"
+    },
+    "AppSettings": {
+        "TokenExpiryHours": 24,
+        "Environment": "Development"
+    }
+}

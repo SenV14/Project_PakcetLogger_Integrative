@@ -93,6 +93,7 @@
             this.pcb_Microsoft.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pcb_Microsoft.TabIndex = 12;
             this.pcb_Microsoft.TabStop = false;
+            this.pcb_Microsoft.Click += new System.EventHandler(this.pcb_Microsoft_Click);
             // 
             // pcb_Google
             // 
@@ -103,6 +104,7 @@
             this.pcb_Google.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pcb_Google.TabIndex = 11;
             this.pcb_Google.TabStop = false;
+            this.pcb_Google.Click += new System.EventHandler(this.pcb_Google_Click);
             // 
             // lnk_Signup
             // 

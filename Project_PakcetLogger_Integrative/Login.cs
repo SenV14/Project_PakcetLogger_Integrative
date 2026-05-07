@@ -1,20 +1,38 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Util.Store;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Linq.Expressions;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Threading;
+using System.Web.UI.WebControls.WebParts;
+using Microsoft.Extensions.Configuration;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
+using Newtonsoft.Json.Linq;
+using Octokit;
+using System.Drawing.Text;
+using System.Net;
+using System.Diagnostics;
+
 
 namespace Project_PakcetLogger_Integrative
 {
     public partial class Login : Form
     {
-     
+
         public Login()
         {
             InitializeComponent();
@@ -27,7 +45,7 @@ namespace Project_PakcetLogger_Integrative
         {
 
 
-            string @database = "Server=127.0.0.1;Port=3306;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;";
+            string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD;";
             string @selecting_method = "SELECT packet_gmail, packet_password from packetlogger_users where packet_gmail = @gmail AND packet_password = @password LIMIT 1";
             string email = email_confirm;
             string password = password_confirm;
@@ -91,9 +109,10 @@ namespace Project_PakcetLogger_Integrative
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while checking the login credentials: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            } }
+            }
+        }
 
-        
+
         public void Login_Load(object sender, EventArgs e) // Confirmation in opening the OTP form after clicking the "Confirm" button
         {
             //
@@ -120,15 +139,15 @@ namespace Project_PakcetLogger_Integrative
             string specialCharacters = @"!@#$%^&*()_+-=[]{}|;':"",.<>/?`~";
             if (!email.ToLower().EndsWith("@gmail.com") || string.IsNullOrEmpty(email) || password.Length < 8 || !password.Any(c => specialCharacters.Contains(specialCharacters)))
             {
-                MessageBox.Show("Please put on the right password in this account before continue","Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txt_password_login.Clear();
-                    txt_Signin_Email.Clear();
-                    txt_Signin_Email.Focus();
-                    number_limit++;
-            if (number_limit >= 3)
-            {
-                MessageBox.Show("You have reached the maximum number of login attempts. Please try again later.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.Close();
+                MessageBox.Show("Please put on the right password in this account before continue", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txt_password_login.Clear();
+                txt_Signin_Email.Clear();
+                txt_Signin_Email.Focus();
+                number_limit++;
+                if (number_limit >= 3)
+                {
+                    MessageBox.Show("You have reached the maximum number of login attempts. Please try again later.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.Close();
                 }
             }
             else
@@ -136,5 +155,95 @@ namespace Project_PakcetLogger_Integrative
                 Check_login(email, password);
             }
         }
+
+        private async void pcb_Google_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Resolve the authentication file from the application's base directory so it works after build/publish
+                var authPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AUTHENTICATION.json");
+                if (!File.Exists(authPath))
+                {
+                    MessageBox.Show($"Authentication file not found: {authPath}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                using (var stream = new FileStream(authPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                {
+                    var secrets = GoogleClientSecrets.FromStream(stream).Secrets;
+                    var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+                    {
+                        ClientSecrets = secrets,
+                        Scopes = new[] { Oauth2Service.Scope.UserinfoEmail },
+                        DataStore = new FileDataStore("DataApp")
+                    });
+
+                    var app = new AuthorizationCodeInstalledApp(flow, new LocalServerCodeReceiver());
+                    var credential = await app.AuthorizeAsync("user", CancellationToken.None);
+                    // Use or store `credential` as needed
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while accessing the authentication file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async void pcb_Microsoft_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string json = File.ReadAllText("github.json");
+
+                var root = JObject.Parse(json);
+
+                if (root == null)
+                {
+                    MessageBox.Show("Client ID not found in github.json", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                var git = root["GitHub"];
+
+                string clientId = git["ClientId"].ToString();
+                string clientSecret = git["ClientSecret"].ToString();
+                string redirectUri = git["RedirectUri"].ToString();
+                string reponame = git["RepositoryName"].ToString();
+                string Owner = git["Owner"].ToString();
+
+                //start the authentication process
+
+                var listener = new System.Net.HttpListener();
+                listener.Prefixes.Add(redirectUri);
+                listener.Start();
+
+                //OPEMIMH THE BROWSER WITH OAUTH
+                string authorization = $"https://github.com/login/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&scope=user,repo";
+                Process.Start(new ProcessStartInfo(authorization) { UseShellExecute = true });
+
+                var context = await listener.GetContextAsync();
+                string code = context.Request.QueryString["code"];
+
+                byte[] buffer = System.Text.Encoding.UTF8.GetBytes("Authentication successful! You can close this window.");
+                context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                context.Response.OutputStream.Close();
+                listener.Stop();
+
+                var Gitclient = new GitHubClient(new ProductHeaderValue("YourAppName"));
+                var tokenRequest = new OauthTokenRequest(clientId, clientSecret, code);
+                var TOKEN = await Gitclient.Oauth.CreateAccessToken(tokenRequest);
+
+                //
+                Gitclient.Credentials = new Credentials(TOKEN.AccessToken);
+                var user = await Gitclient.User.Current();
+                var repos = await Gitclient.Repository.GetAllForCurrent();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while reading the GitHub configuration: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+      
+
     }
 }

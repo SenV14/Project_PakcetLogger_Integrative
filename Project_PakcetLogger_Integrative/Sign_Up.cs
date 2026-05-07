@@ -27,9 +27,9 @@ using Microsoft.Extensions.Configuration;
 using Google.Apis.Oauth2.v2;
 using Google.Apis.Oauth2.v2.Data;
 using Octokit;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using System.Drawing.Text;
+using System.Net;
+using BCrypt.Net;
 
 
 namespace Project_PakcetLogger_Integrative
@@ -80,7 +80,7 @@ namespace Project_PakcetLogger_Integrative
                 {
                     try
                     {
-                        string @database = "Server=127.0.0.1;Port=3306;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD";
+                        string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=P@55W0RD";
                         string select_method = "SELECT packet_gmail FROM packetlogger_users WHERE packet_gmail = @Email LIMIT 1";
                         using (MySqlConnection @connection = new MySqlConnection(@database))
                         {
@@ -172,7 +172,7 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
-                string database = "Server = 127.0.0.1; Port = 3306; Database = packetlogger_login; Uid = root; Pwd = P@55W0RD";
+                string database = "Server = 127.0.0.1; Port = 3308; Database = packetlogger_login; Uid = root; Pwd = P@55W0RD";
                 string command = "SELECT email_info FROM packet_logger_authentication WHERE email_info = @Email LIMIT 1";
                 using (MySqlConnection connection = new MySqlConnection(database))
                 {
@@ -204,15 +204,17 @@ namespace Project_PakcetLogger_Integrative
             }
         }
 
-        private async void pictureBox4_Click(object sender, EventArgs e)
+        private async void pictureBox4_Click(object sender, EventArgs eventArgs)
         {
             pictureBox4.Enabled = false;
+            HttpListener listener = null;
+
             try
             {
                 var config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("github.json", optional: false)
-                .Build();
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("github.json", optional: false)
+                    .Build();
 
                 var clientId = config["GitHub:ClientId"];
                 var clientSecret = config["GitHub:ClientSecret"];
@@ -221,20 +223,101 @@ namespace Project_PakcetLogger_Integrative
                 var request = new OauthLoginRequest(clientId)
                 {
                     Scopes = { "user:email" }
+                    // If your Octokit version supports it, you can set RedirectUri here:
+                    // RedirectUri = "http://localhost:5001/"
                 };
+
                 Uri loginURL = client.Oauth.GetGitHubLoginUrl(request);
 
-                System.Diagnostics.Process.Start(
-                new System.Diagnostics.ProcessStartInfo(loginURL.ToString())
+                // Start a local HTTP listener to receive the OAuth redirect.
+                // Make sure this exact prefix is registered as a redirect URL in your GitHub OAuth app.
+                var redirectPrefix = "http://localhost:5001/";
+                listener = new HttpListener();
+                listener.Prefixes.Add(redirectPrefix);
+                listener.Start();
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(loginURL.ToString())
                 {
                     UseShellExecute = true
-                }
-                    );
+                });
 
+                // Wait for the incoming OAuth redirect request
+                var context = await listener.GetContextAsync();
+                var code = context.Request.QueryString.Get("code");
+
+                // Respond to the browser so the user sees something
+                var responseString = "<html><body>Authentication complete. You can close this window.</body></html>";
+                var buffer = Encoding.UTF8.GetBytes(responseString);
+                context.Response.ContentLength64 = buffer.Length;
+                await context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                context.Response.OutputStream.Close();
+
+                var tokenRequest = new OauthTokenRequest(clientId, clientSecret, code);
+                var token = await client.Oauth.CreateAccessToken(tokenRequest);
+                if (token == null || string.IsNullOrWhiteSpace(token.AccessToken))
+                {
+                    MessageBox.Show("Failed to obtain access token.", "GitHub OAuth", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                client.Credentials = new Credentials(token.AccessToken);
+                var user = await client.User.Current();
+
+                string email = user?.Email;
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    try
+                    {
+                        var emails = await client.User.Email.GetAll();
+                        var primary = emails?.FirstOrDefault(e =>
+                        {
+                            if (e is null)
+                            {
+                                throw new ArgumentNullException(nameof(e));
+                            }
+
+                            return e.Primary;
+                        }) ?? emails?.FirstOrDefault();
+                        if (primary != null) email = primary.Email;
+                    }
+                    catch { }
+                }
+
+                if (string.IsNullOrWhiteSpace(email))
+                    email = (user?.Login ?? "unknown") + "@github";
+
+                SaveEncryptedToken(email, token.AccessToken);
+                MessageBox.Show($"Authenticated as {user?.Login} (email: {email})", "GitHub OAuth", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while handling the picture box click: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                try { listener?.Stop(); listener?.Close(); } catch { }
+                pictureBox4.Enabled = true;
+            }
+        }
+
+        private void SaveEncryptedToken(string email, string token)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token)) return;
+
+            // Protect token with DPAPI for current user/machine
+            var protectedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(token), null, DataProtectionScope.CurrentUser);
+            var protectedBase64 = Convert.ToBase64String(protectedBytes);
+
+            var cs = Environment.GetEnvironmentVariable("DB_CONN"); // don't hardcode
+            using (var conn = new MySqlConnection(cs))
+            {
+                conn.Open();
+                using (var cmd = new MySqlCommand("INSERT INTO packet_logger_authentication (email_info, token_enc) VALUES (@e,@t) ON DUPLICATE KEY UPDATE token_enc=@t", conn))
+                {
+                    cmd.Parameters.AddWithValue("@e", email);
+                    cmd.Parameters.AddWithValue("@t", protectedBase64);
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
     }
