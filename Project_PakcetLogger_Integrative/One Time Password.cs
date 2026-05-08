@@ -197,6 +197,7 @@ namespace Project_PakcetLogger_Integrative
                     MessageBox.Show("You are in, Congratulations! on your own", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     DatabaseCommand(Code, Email, Password);
                 }
+             
                
             }
             catch (Exception ex)
@@ -209,7 +210,7 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
-                
+                string hashedOTP = BCrypt.Net.BCrypt.HashPassword(Code);
                 DateTime patch_date = DateTime.Now;
                 string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
                 string select_method = "INSERT INTO packetlogger_users (packet_gmail, packet_password, OTP_PACKET) VALUES (@Email, @Password,@Code)";
@@ -218,7 +219,7 @@ namespace Project_PakcetLogger_Integrative
                     connection.Open();
                     using (MySqlCommand INSERT = new MySqlCommand(select_method, connection))
                     {
-                        INSERT.Parameters.AddWithValue("@Code", Code);
+                        INSERT.Parameters.AddWithValue("@Code", hashedOTP);
                         INSERT.Parameters.AddWithValue("@Email", Email);
                         INSERT.Parameters.AddWithValue("@Password", Password);
                         INSERT.ExecuteNonQuery();

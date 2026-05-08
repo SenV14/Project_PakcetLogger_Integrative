@@ -46,7 +46,7 @@ namespace Project_PakcetLogger_Integrative
 
 
             string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
-            string @selecting_method = "SELECT packet_gmail, packet_password from packetlogger_users where packet_gmail = @gmail AND packet_password = @password LIMIT 1";
+            string @selecting_method = "SELECT packet_gmail, packet_password from packetlogger_users where packet_gmail = @gmail  LIMIT 1";
             string email = email_confirm;
             string password = password_confirm;
             try
@@ -65,8 +65,9 @@ namespace Project_PakcetLogger_Integrative
                             if (reader.Read())
                             {
                                 string storedEmail = reader.GetString("packet_gmail");
-                                string stored_password = reader.GetString("packet_password");
-                                if (storedEmail == email && stored_password == password)
+                                string stored_hash = reader.GetString("packet_password");
+
+                                if (storedEmail == email && BCrypt.Net.BCrypt.Verify(password, stored_hash))
                                 {
                                     MessageBox.Show("Login successful! Welcome, " + storedEmail, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     MessageBox.Show("Password Correct and successfully logged in!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
