@@ -46,7 +46,7 @@ namespace Project_PakcetLogger_Integrative
 
 
             string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
-            string @selecting_method = "SELECT packet_gmail, packet_password from packetlogger_users where packet_gmail = @gmail  LIMIT 1";
+            string @selecting_method = "SELECT packet_gmail from packetlogger_users where packet_gmail = @gmail  LIMIT 1";
             string email = email_confirm;
             string password = password_confirm;
             try
@@ -58,7 +58,7 @@ namespace Project_PakcetLogger_Integrative
                     using (MySqlCommand sql_identity = new MySqlCommand(@selecting_method, connect))
                     {
                         sql_identity.Parameters.AddWithValue("@gmail", email);
-                        sql_identity.Parameters.AddWithValue("@password", password);
+                       
 
                         using (MySqlDataReader reader = sql_identity.ExecuteReader())
                         {

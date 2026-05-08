@@ -43,7 +43,7 @@ namespace Project_PakcetLogger_Integrative
                 string connection = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
 
                 // Added OTP_PACKET to the SELECT list
-                string query = "SELECT packet_gmail FROM packetlogger_users WHERE  OTP_PACKET = @OTP LIMIT 1";
+                string query = "SELECT OTP_PACKET FROM packetlogger_users WHERE  packet_gmail = @Email LIMIT 1";
 
                 using (MySqlConnection connect = new MySqlConnection(connection))
                 {
@@ -51,24 +51,29 @@ namespace Project_PakcetLogger_Integrative
                     using (MySqlCommand command = new MySqlCommand(query, connect))
                     {
                         command.Parameters.AddWithValue("@Email", email);
-                        command.Parameters.AddWithValue("@OTP", OTP_permit);
-
-                        // Use ExecuteScalar if you only need to check existence
-                        object result = command.ExecuteScalar();
-
-                        if (result != null)
+      
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            MessageBox.Show("OTP verified successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            if (reader.Read())
+                            {
+                                string storedOTP = reader.GetString("OTP_PACKET");
+                                string user_otp_typed =  txt_One_time_Permit.Text.Trim();
+                                if (BCrypt.Net.BCrypt.Verify(user_otp_typed, storedOTP))
+                                {
+                                    MessageBox.Show("OTP verified successfully!");
+                                    // Open your logger form here
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Invalid OTP. The numbers don't match the hash.");
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("No user found with the provided email.");
+                            }
+                        }
 
-                            Packet_Logger loggerForm = new Packet_Logger();
-                            loggerForm.Show();
-                            this.Hide();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Invalid OTP. Please try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            txt_One_time_Permit.Clear();
-                        }
                     }
                 }
             }
