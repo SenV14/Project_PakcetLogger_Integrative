@@ -76,7 +76,7 @@ namespace Project_PakcetLogger_Integrative
                     return;
 
                 }
-                else if (password.Length < 8 || password.Any(c => specialCharacters.Contains(specialCharacters)) || email.ToLower().EndsWith("@gmail.com"))
+                else 
                 {
                     try
                     {
@@ -129,6 +129,53 @@ namespace Project_PakcetLogger_Integrative
             }
         }
 
+        private bool HandleUserAuthentication(string email, string accessToken = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                {
+                    MessageBox.Show("Email is required for authentication.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+                string CONNECTION_STRING = "Server=127.0.0.1; Port=3308; Database=packetlogger_login; Uid=root; Pwd=p@55w0rd23!4@";
+                using (var connect = new MySqlConnection(CONNECTION_STRING))
+                {
+                    connect.Open();
+                    string protectedBase64 = null;
+
+
+                        if (!string.IsNullOrEmpty(accessToken))
+                    {
+                        var protectedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(accessToken), null, DataProtectionScope.CurrentUser);
+                        protectedBase64 = Convert.ToBase64String(protectedBytes);
+                    }
+
+                    // 3. Upsert into database
+                    string upsertQuery = @"INSERT INTO packet_logger_authentication (email_info, token_enc) 
+                                 VALUES (@email, @token) 
+                                 ON DUPLICATE KEY UPDATE token_enc = @token";
+
+                    using (MySqlCommand upsertCmd = new MySqlCommand(upsertQuery, connect))
+                    {
+                        upsertCmd.Parameters.AddWithValue("@email", email);
+                        // Send DBNull if there is no token (common for Google flow)
+                        upsertCmd.Parameters.AddWithValue("@token", (object)protectedBase64 ?? DBNull.Value);
+                        upsertCmd.ExecuteNonQuery();
+                        
+                    }
+                    
+                }
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while handling user authentication: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
         private async void pictureBox3_Click(object sender, EventArgs e)
         {
             try
@@ -145,6 +192,7 @@ namespace Project_PakcetLogger_Integrative
                     ClientId = config["Installed:client_id"],
                     ClientSecret = config["Installed:client_secret"]
                 };
+
                 //using User credential for signing in with google account and requesting the email scope basically user consent
                 UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     secrets,
@@ -153,57 +201,27 @@ namespace Project_PakcetLogger_Integrative
                     token,
                     new FileDataStore("GoogleOAuth")
                 );
+
                 // getting the email after successful authentication and putting in mysqlworkbench for double security
-                var oauth2Service = new Oauth2Service(new BaseClientService.Initializer
-                {
-                    HttpClientInitializer = credential,
-                    ApplicationName = "integ-project"
-                });
-                // used to get the userinfo in the credentials and then get the email from the userinfo
+                var oauth2Service = new Oauth2Service(new BaseClientService.Initializer { HttpClientInitializer = credential });
                 Userinfo userinfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
-                string email = userinfo.Email;
-                Sign_up_Load(email);
+
+                string googleToken = credential.Token.AccessToken;
+
+                if (HandleUserAuthentication(userinfo.Email, googleToken))
+                {
+                    this.Hide();
+                    Packet_Logger mainApp = new Packet_Logger();
+                    mainApp.FormClosed += (s, args) => this.Close();
+                    mainApp.Show();
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("An error occurred while handling the picture box click: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private void Sign_up_Load(string email)
-        {
-            try
-            {
-                string database = "Server = 127.0.0.1; Port = 3308; Database = packetlogger_login; Uid = root; Pwd = p@55w0rd23!4@";
-                string command = "SELECT email_info FROM packet_logger_authentication WHERE email_info = @Email LIMIT 1";
-                using (MySqlConnection connection = new MySqlConnection(database))
-                {
-                    connection.Open();
-                    using (MySqlCommand select = new MySqlCommand(command, connection))
-                    {
-                        select.Parameters.AddWithValue("@Email", email);
-                        using (MySqlDataReader reader = select.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                MessageBox.Show("This email is already registered.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
-                            else if (!reader.HasRows)
-                            {
-                                MessageBox.Show("Email is not available for registration.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                OTP_LOGIN otp = new OTP_LOGIN(email, null);
-                                otp.Show();
-                                this.Hide();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("An error occurred while loading the Sign-up form: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+       
 
         private async void pictureBox4_Click(object sender, EventArgs eventArgs)
         {
@@ -284,11 +302,16 @@ namespace Project_PakcetLogger_Integrative
                     catch { }
                 }
 
-                if (string.IsNullOrWhiteSpace(email))
-                    email = (user?.Login ?? "unknown") + "@github";
+                if (string.IsNullOrWhiteSpace(email)) email = (user?.Login ?? "unknown") + "@github";
 
-                SaveEncryptedToken(email, token.AccessToken);
-                MessageBox.Show($"Authenticated as {user?.Login} (email: {email})", "GitHub OAuth", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (HandleUserAuthentication(email, token.AccessToken))
+                {
+                    MessageBox.Show($"Authenticated as {user?.Login}", "Success");
+                    this.Hide();
+                    Packet_Logger mainApp = new Packet_Logger();
+                    mainApp.FormClosed += (s, args) => this.Close();
+                    mainApp.Show();
+                }
             }
             catch (Exception ex)
             {
@@ -301,25 +324,9 @@ namespace Project_PakcetLogger_Integrative
             }
         }
 
-        private void SaveEncryptedToken(string email, string token)
+        private void Sign_up_Load(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token)) return;
 
-            // Protect token with DPAPI for current user/machine
-            var protectedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(token), null, DataProtectionScope.CurrentUser);
-            var protectedBase64 = Convert.ToBase64String(protectedBytes);
-
-            var cs = Environment.GetEnvironmentVariable("DB_CONN"); // don't hardcode
-            using (var conn = new MySqlConnection(cs))
-            {
-                conn.Open();
-                using (var cmd = new MySqlCommand("INSERT INTO packet_logger_authentication (email_info, token_enc) VALUES (@e,@t) ON DUPLICATE KEY UPDATE token_enc=@t", conn))
-                {
-                    cmd.Parameters.AddWithValue("@e", email);
-                    cmd.Parameters.AddWithValue("@t", protectedBase64);
-                    cmd.ExecuteNonQuery();
-                }
-            }
         }
     }
 }

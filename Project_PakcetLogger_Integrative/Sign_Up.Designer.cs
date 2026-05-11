@@ -42,32 +42,28 @@
             this.label2 = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Purple;
             this.groupBox1.Controls.Add(this.groupBox2);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Location = new System.Drawing.Point(41, 29);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1361, 583);
+            this.groupBox1.Size = new System.Drawing.Size(1132, 552);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
             // 
             // groupBox2
             // 
             this.groupBox2.BackColor = System.Drawing.Color.MediumVioletRed;
             this.groupBox2.Controls.Add(this.linkLabel1);
+            this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.pictureBox4);
             this.groupBox2.Controls.Add(this.pictureBox3);
             this.groupBox2.Controls.Add(this.button1);
@@ -77,19 +73,18 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.pictureBox2);
-            this.groupBox2.Location = new System.Drawing.Point(655, 47);
+            this.groupBox2.Location = new System.Drawing.Point(22, 46);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(644, 508);
+            this.groupBox2.Size = new System.Drawing.Size(1072, 467);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "groupBox2";
             // 
             // linkLabel1
             // 
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.linkLabel1.LinkColor = System.Drawing.Color.Transparent;
-            this.linkLabel1.Location = new System.Drawing.Point(543, 405);
+            this.linkLabel1.Location = new System.Drawing.Point(413, 314);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(44, 16);
             this.linkLabel1.TabIndex = 11;
@@ -100,9 +95,9 @@
             // pictureBox4
             // 
             this.pictureBox4.Image = global::Project_PakcetLogger_Integrative.Properties.Resources.Microsoft_removebg_preview;
-            this.pictureBox4.Location = new System.Drawing.Point(563, 442);
+            this.pictureBox4.Location = new System.Drawing.Point(86, 408);
             this.pictureBox4.Name = "pictureBox4";
-            this.pictureBox4.Size = new System.Drawing.Size(66, 54);
+            this.pictureBox4.Size = new System.Drawing.Size(74, 53);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox4.TabIndex = 12;
             this.pictureBox4.TabStop = false;
@@ -111,7 +106,7 @@
             // pictureBox3
             // 
             this.pictureBox3.Image = global::Project_PakcetLogger_Integrative.Properties.Resources.google_removebg_preview;
-            this.pictureBox3.Location = new System.Drawing.Point(483, 442);
+            this.pictureBox3.Location = new System.Drawing.Point(6, 407);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(74, 54);
             this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -121,7 +116,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(35, 417);
+            this.button1.Location = new System.Drawing.Point(39, 331);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(110, 28);
             this.button1.TabIndex = 9;
@@ -132,20 +127,20 @@
             // txt_Signup
             // 
             this.txt_Signup.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txt_Signup.Location = new System.Drawing.Point(35, 210);
+            this.txt_Signup.Location = new System.Drawing.Point(39, 171);
             this.txt_Signup.Multiline = true;
             this.txt_Signup.Name = "txt_Signup";
-            this.txt_Signup.Size = new System.Drawing.Size(564, 66);
+            this.txt_Signup.Size = new System.Drawing.Size(418, 35);
             this.txt_Signup.TabIndex = 8;
             // 
             // txt_Password
             // 
             this.txt_Password.Font = new System.Drawing.Font("Microsoft Sans Serif", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txt_Password.Location = new System.Drawing.Point(35, 336);
+            this.txt_Password.Location = new System.Drawing.Point(39, 276);
             this.txt_Password.Multiline = true;
             this.txt_Password.Name = "txt_Password";
             this.txt_Password.PasswordChar = '*';
-            this.txt_Password.Size = new System.Drawing.Size(564, 66);
+            this.txt_Password.Size = new System.Drawing.Size(418, 35);
             this.txt_Password.TabIndex = 7;
             // 
             // label4
@@ -153,7 +148,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Lucida Fax", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.label4.Location = new System.Drawing.Point(29, 300);
+            this.label4.Location = new System.Drawing.Point(33, 228);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(160, 33);
             this.label4.TabIndex = 5;
@@ -164,7 +159,7 @@
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Lucida Fax", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.label3.Location = new System.Drawing.Point(29, 162);
+            this.label3.Location = new System.Drawing.Point(33, 123);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(131, 33);
             this.label3.TabIndex = 4;
@@ -175,7 +170,7 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Lucida Fax", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.label2.Location = new System.Drawing.Point(236, 58);
+            this.label2.Location = new System.Drawing.Point(33, 42);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(393, 66);
             this.label2.TabIndex = 3;
@@ -186,9 +181,9 @@
             this.pictureBox2.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
             this.pictureBox2.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources.Gemini_Generated_Image_f83s8wf83s8wf83s_removebg_preview;
-            this.pictureBox2.Location = new System.Drawing.Point(25, 31);
+            this.pictureBox2.Location = new System.Drawing.Point(521, 123);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(193, 112);
+            this.pictureBox2.Size = new System.Drawing.Size(503, 286);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 0;
             this.pictureBox2.TabStop = false;
@@ -198,42 +193,29 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Lucida Fax", 60F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.label1.Location = new System.Drawing.Point(6, 25);
+            this.label1.Location = new System.Drawing.Point(432, 16);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(634, 92);
             this.label1.TabIndex = 1;
             this.label1.Text = "Packet Logger";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.ErrorImage = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
-            this.pictureBox1.Image = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
-            this.pictureBox1.InitialImage = global::Project_PakcetLogger_Integrative.Properties.Resources._2cd15a0f000dfe9bc43a762594f28190_removebg_preview;
-            this.pictureBox1.Location = new System.Drawing.Point(47, 148);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(530, 407);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // Sign_up
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(1445, 652);
+            this.ClientSize = new System.Drawing.Size(1212, 607);
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Sign_up";
             this.Text = "Sign_up";
+            this.Load += new System.EventHandler(this.Sign_up_Load);
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -252,7 +234,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }

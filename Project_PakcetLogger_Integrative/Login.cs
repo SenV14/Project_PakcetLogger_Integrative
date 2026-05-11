@@ -1,31 +1,33 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.Oauth2.v2.Data;
+using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Linq.Expressions;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web.UI.WebControls.WebParts;
-using Microsoft.Extensions.Configuration;
-using Google.Apis.Oauth2.v2;
-using Google.Apis.Oauth2.v2.Data;
-using Newtonsoft.Json.Linq;
-using Octokit;
-using System.Drawing.Text;
-using System.Net;
-using System.Diagnostics;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 
 namespace Project_PakcetLogger_Integrative
@@ -46,7 +48,7 @@ namespace Project_PakcetLogger_Integrative
 
 
             string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
-            string @selecting_method = "SELECT packet_gmail from packetlogger_users where packet_gmail = @gmail  LIMIT 1";
+            string @selecting_method = "SELECT packet_gmail, packet_password FROM packetlogger_users WHERE packet_gmail = @gmail LIMIT 1";
             string email = email_confirm;
             string password = password_confirm;
             try
@@ -157,6 +159,94 @@ namespace Project_PakcetLogger_Integrative
             }
         }
 
+        private bool HandleUserAuthentication(string email, string accessToken = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                {
+                    MessageBox.Show("Email is required for authentication.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+                string CONNECTION_STRING = "Server=127.0.0.1; Port=3308; Database=packetlogger_login; Uid=root; Pwd=p@55w0rd23!4@";
+                using (var connect = new MySqlConnection(CONNECTION_STRING))
+                {
+                    connect.Open();
+                    string protectedBase64 = null;
+
+
+                    if (!string.IsNullOrEmpty(accessToken))
+                    {
+                        var protectedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(accessToken), null, DataProtectionScope.CurrentUser);
+                        protectedBase64 = Convert.ToBase64String(protectedBytes);
+                    }
+
+                    // 3. Upsert into database
+                    string upsertQuery = @"INSERT INTO packet_logger_authentication (email_info, token_enc) 
+                                 VALUES (@email, @token) 
+                                 ON DUPLICATE KEY UPDATE token_enc = @token";
+
+                    using (MySqlCommand upsertCmd = new MySqlCommand(upsertQuery, connect))
+                    {
+                        upsertCmd.Parameters.AddWithValue("@email", email);
+                        // Send DBNull if there is no token (common for Google flow)
+                        upsertCmd.Parameters.AddWithValue("@token", (object)protectedBase64 ?? DBNull.Value);
+                        upsertCmd.ExecuteNonQuery();
+
+                    }
+
+                }
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while handling user authentication: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        private async void pictureBox3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //
+                CancellationTokenSource ctc = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+                CancellationToken token = ctc.Token;
+                // this is used to find the json file
+                var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("AUTHENTICATION.json", optional: false).Build();
+                // creating variable for the client and finding client secret in file in order to push rep and authenticate
+                var secrets = new ClientSecrets
+                {
+                    ClientId = config["Installed:client_id"],
+                    ClientSecret = config["Installed:client_secret"]
+                };
+
+                //using User credential for signing in with google account and requesting the email scope basically user consent
+                UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    secrets,
+                    new[] { Oauth2Service.Scope.UserinfoEmail }, //permission to get the email of the user
+                    "user",
+                    token,
+                    new FileDataStore("GoogleOAuth")
+                );
+
+                // getting the email after successful authentication and putting in mysqlworkbench for double security
+                var oauth2Service = new Oauth2Service(new BaseClientService.Initializer { HttpClientInitializer = credential });
+                Userinfo userinfo = await oauth2Service.Userinfo.Get().ExecuteAsync();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred while handling the picture box click: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
+
+
         private async void pcb_Google_Click(object sender, EventArgs e)
         {
             try
@@ -182,6 +272,19 @@ namespace Project_PakcetLogger_Integrative
                     var app = new AuthorizationCodeInstalledApp(flow, new LocalServerCodeReceiver());
                     var credential = await app.AuthorizeAsync("user", CancellationToken.None);
                     // Use or store `credential` as needed
+                    // 1. Get user email from Google API
+                    var oauthService = new Oauth2Service(new BaseClientService.Initializer { HttpClientInitializer = credential });
+                    Userinfo userInfo = await oauthService.Userinfo.Get().ExecuteAsync();
+
+                    // 2. Validate with Database and Switch Form
+                    if (HandleUserAuthentication(userInfo.Email, credential.Token.AccessToken))
+                    {
+                        this.Hide();
+                        Packet_Logger mainApp = new Packet_Logger();
+                        mainApp.FormClosed += (s, args) => this.Close(); // This is the most important line
+                        
+                        mainApp.Show();
+                    }
                 }
             }
             catch (Exception ex)
@@ -237,6 +340,18 @@ namespace Project_PakcetLogger_Integrative
                 Gitclient.Credentials = new Credentials(TOKEN.AccessToken);
                 var user = await Gitclient.User.Current();
                 var repos = await Gitclient.Repository.GetAllForCurrent();
+                string email = user.Email ?? user.Login;
+
+                // 2. Validate with Database and Switch Form
+                if (HandleUserAuthentication(email, TOKEN.AccessToken))
+                {
+                    MessageBox.Show($"Logged in as {user.Login}", "Success");
+                    this.Hide();
+                    Packet_Logger mainApp = new Packet_Logger();
+                    mainApp.FormClosed += (s, args) => this.Close();
+                    mainApp.Show();
+                }
+
 
             }
             catch (Exception ex)
@@ -244,7 +359,15 @@ namespace Project_PakcetLogger_Integrative
                 MessageBox.Show("An error occurred while reading the GitHub configuration: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-      
 
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Login_Load_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }

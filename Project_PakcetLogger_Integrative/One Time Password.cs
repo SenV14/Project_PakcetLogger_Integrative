@@ -87,7 +87,7 @@ namespace Project_PakcetLogger_Integrative
                 {
                     client.Connect("smtp.gmail.com", 587, false);
                     // must use your own client email to be the sender
-                    client.Authenticate("puppetemail875@gmail.com", "aafjpmcwbqrszemq");
+                    client.Authenticate("-----.com", "----");
                     // .send used for sending to the receiver
                     client.Send(message);
                     client.Disconnect(true);
