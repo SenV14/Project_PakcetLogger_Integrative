@@ -57,7 +57,7 @@ namespace Project_PakcetLogger_Integrative
                     device = devices[index];
                     device.OnPacketArrival += new PacketArrivalEventHandler(device_OnPacketArrival);
 
-                    // Open device in Promiscuous mode
+                    // Open device in Promiscuous mode to ensure all packets are captured.
                     device.Open(DeviceModes.Promiscuous, 1000);
                     device.StartCapture();
 

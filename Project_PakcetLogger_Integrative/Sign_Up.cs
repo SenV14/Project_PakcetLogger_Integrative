@@ -80,7 +80,11 @@ namespace Project_PakcetLogger_Integrative
                 {
                     try
                     {
-                        string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@";
+                        var config = new ConfigurationBuilder()
+                       .SetBasePath(Directory.GetCurrentDirectory())
+                       .AddJsonFile("Database.json", optional: false)
+                       .Build();
+                        string @database = config.GetConnectionString("DefaultConnection");
                         string select_method = "SELECT packet_gmail FROM packetlogger_users WHERE packet_gmail = @Email LIMIT 1";
                         using (MySqlConnection @connection = new MySqlConnection(@database))
                         {
@@ -133,12 +137,17 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
+                var config = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("Database.json", optional: false)
+               .Build();
+
                 if (string.IsNullOrEmpty(email))
                 {
                     MessageBox.Show("Email is required for authentication.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
-                string CONNECTION_STRING = "Server=127.0.0.1; Port=3308; Database=packetlogger_login; Uid=root; Pwd=p@55w0rd23!4@";
+                string CONNECTION_STRING = config.GetConnectionString("DefaultConnection");
                 using (var connect = new MySqlConnection(CONNECTION_STRING))
                 {
                     connect.Open();
@@ -238,10 +247,11 @@ namespace Project_PakcetLogger_Integrative
                 var clientId = config["GitHub:ClientId"];
                 var clientSecret = config["GitHub:ClientSecret"];
                 var client = new GitHubClient(new ProductHeaderValue("Cybersec-integ"));
-
+                string expectedState = Guid.NewGuid().ToString();
                 var request = new OauthLoginRequest(clientId)
                 {
-                    Scopes = { "user:email" }
+                    Scopes = { "user:email" },
+                    State = expectedState,
                     // If your Octokit version supports it, you can set RedirectUri here:
                     // RedirectUri = "http://localhost:5001/"
                 };

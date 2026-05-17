@@ -2,13 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using Microsoft.Extensions.Configuration;
 namespace Project_PakcetLogger_Integrative
 {
     public partial class OTP_LOGIN : Form
@@ -19,6 +21,8 @@ namespace Project_PakcetLogger_Integrative
         public OTP_LOGIN(string email, string password)
         {
             InitializeComponent();
+            this.email = email;
+            this.password = password;
       
         }
     
@@ -38,9 +42,13 @@ namespace Project_PakcetLogger_Integrative
             try
             {
 
+                var config = new ConfigurationBuilder()
+                       .SetBasePath(Directory.GetCurrentDirectory())
+                       .AddJsonFile("Database.json", optional: false)
+                       .Build();
                 string OTP_permit = txt_One_time_Permit.Text;
                 // Check your Port! Default is 3306.
-                string connection = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
+                string connection = config.GetConnectionString("DefaultConnection");
 
                 // Added OTP_PACKET to the SELECT list
                 string query = "SELECT OTP_PACKET FROM packetlogger_users WHERE  packet_gmail = @Email LIMIT 1";
@@ -50,7 +58,7 @@ namespace Project_PakcetLogger_Integrative
                     connect.Open();
                     using (MySqlCommand command = new MySqlCommand(query, connect))
                     {
-                        command.Parameters.AddWithValue("@Email", email);
+                        command.Parameters.AddWithValue("@Email", this.email);
       
                         using (MySqlDataReader reader = command.ExecuteReader())
                         {
@@ -61,7 +69,10 @@ namespace Project_PakcetLogger_Integrative
                                 if (BCrypt.Net.BCrypt.Verify(user_otp_typed, storedOTP))
                                 {
                                     MessageBox.Show("OTP verified successfully!");
-                                    // Open your logger form here
+                                    Packet_Logger packet = new Packet_Logger();
+                                    packet.Show();
+                                    this.Hide();
+                                
                                 }
                                 else
                                 {

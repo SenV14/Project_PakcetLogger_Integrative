@@ -347,7 +347,9 @@
     <None Include="AUTHENTICATION.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Database.json" />
+    <None Include="Database.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="github.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

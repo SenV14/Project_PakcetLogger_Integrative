@@ -46,8 +46,11 @@ namespace Project_PakcetLogger_Integrative
         public void Check_login(string email_confirm, string password_confirm)
         {
 
-
-            string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
+            var config = new ConfigurationBuilder()
+                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("Database.json", optional: false)
+                   .Build();
+            string @database = config.GetConnectionString("DefaultConnection");
             string @selecting_method = "SELECT packet_gmail, packet_password FROM packetlogger_users WHERE packet_gmail = @gmail LIMIT 1";
             string email = email_confirm;
             string password = password_confirm;
@@ -168,7 +171,11 @@ namespace Project_PakcetLogger_Integrative
                     MessageBox.Show("Email is required for authentication.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
                 }
-                string CONNECTION_STRING = "Server=127.0.0.1; Port=3308; Database=packetlogger_login; Uid=root; Pwd=p@55w0rd23!4@";
+                var config = new ConfigurationBuilder()
+                    .SetBasePath(Directory.GetCurrentDirectory())
+                    .AddJsonFile("Database.json", optional: false)
+                    .Build();
+                string CONNECTION_STRING = config.GetConnectionString("DefaultConnection");
                 using (var connect = new MySqlConnection(CONNECTION_STRING))
                 {
                     connect.Open();

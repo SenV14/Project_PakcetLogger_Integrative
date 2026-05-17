@@ -7,11 +7,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using System.Windows.Forms;
 
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
@@ -87,7 +89,7 @@ namespace Project_PakcetLogger_Integrative
                 {
                     client.Connect("smtp.gmail.com", 587, false);
                     // must use your own client email to be the sender
-                    client.Authenticate("-----.com", "----");
+                    client.Authenticate("puppetemail875@gmail.com", "aafjpmcwbqrszemq");
                     // .send used for sending to the receiver
                     client.Send(message);
                     client.Disconnect(true);
@@ -189,7 +191,13 @@ namespace Project_PakcetLogger_Integrative
                 string Code = otp_code;
                 string Email = receivedData;    
                 string Password = password;
-                string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";      
+                string hashedOTP = BCrypt.Net.BCrypt.HashPassword(Code);
+                DateTime patch_date = DateTime.Now;
+                var config = new ConfigurationBuilder()
+                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("Database.json", optional: false)
+                   .Build();
+                string @database = config.GetConnectionString("DefaultConnection");      
                 var databases = new MySqlConnection(@database);
                 databases.Open();
                 if (databases.State == ConnectionState.Open)
@@ -210,9 +218,14 @@ namespace Project_PakcetLogger_Integrative
         {
             try
             {
+
                 string hashedOTP = BCrypt.Net.BCrypt.HashPassword(Code);
                 DateTime patch_date = DateTime.Now;
-                string @database = "Server=127.0.0.1;Port=3308;Database=packetlogger_login;Uid=root;Pwd=p@55w0rd23!4@;";
+                var config = new ConfigurationBuilder()
+                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("Database.json", optional: false)
+                   .Build();
+                string @database = config.GetConnectionString("DefaultConnection");
                 string select_method = "INSERT INTO packetlogger_users (packet_gmail, packet_password, OTP_PACKET) VALUES (@Email, @Password,@Code)";
                 using(MySqlConnection @connection = new MySqlConnection(@database))
                 {
